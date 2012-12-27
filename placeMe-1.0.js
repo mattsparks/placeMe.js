@@ -28,8 +28,10 @@ $(document).ready(function(){
 		// Go through each element and assign the "value" attribute the value of the "placeholder"
 		// This will allow users with no support to see the default text
 		$placeholder.each(function(){
-			var $message = $(this).attr("placeholder");
-			$(this).attr("value", $message);
+			if($(this).attr("value") == "") {
+				var $message = $(this).attr("placeholder");
+				$(this).attr("value", $message);
+			}
 		 });
 		
 		// When a user clicks the input (on focus) the default text will be removed
