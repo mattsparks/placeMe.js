@@ -23,17 +23,52 @@ $(document).ready(function(){
 	{
 		// The "placeholder" attribute isn't supported. Let's fake it.
 		
-		var $placeholder = $(":input[placeholder]"); // Get all the input elements with the "placeholder" attribute
+		// Get all the input elements with the "placeholder" attribute
+		var $placeholder = $(":input[placeholder]"); 
 		
 		// Go through each element and assign the "value" attribute the value of the "placeholder"
 		// This will allow users with no support to see the default text
 		$placeholder.each(function(){
-			if($(this).attr("value") == "") {
+
+			// The password input type in IE is masked, so the solution for other input types won't work.
+			// As a work around we'll create a new <input type="text"> element and add it to the DOM.
+			// Once it's created we'll place it above the password feild to essentially "hide" it below our new element.
+			// When the new element is focused, we'll hide it revealing the actual password element. 
+			if($(this).attr("type") == "password") {
+				// Get x position
+			 	var x = $(this).position().left;
+			 	// Get y position
+			 	var y = $(this).position().top;
+			 	// Get class attributes
+			 	var eclass = $(this).attr("class");
+			 	// Get id attribute
+			 	var id = $(this).attr("id");
+			 	// Get value
+			 	var val = $(this).attr("placeholder");
+			 	// Get parent element
+			 	var parent = $(this).parent();
+
+			 	// Create new input and place it within the parent element
+			 	// Using CSS positioning we'll place it above the original element
+			 	// We'll also add a class of "placePass" to keep track of these new elements
+			 	$(parent).prepend('<input type="text" id="'+id+'" class="'+eclass+' placePass" value="'+val+'" style="position: absolute; top: '+y+' left: '+x+' z-index: 9999;">');
+
+			}
+
+			// Make sure the value attribute is empty and not a password input
+			if(($(this).attr("value") == "") && ($(this).attr("type") != "password")) {
+				// Get value of the placeholder attribute
 				var $message = $(this).attr("placeholder");
+				// Put that value in the "value" attribute
 				$(this).attr("value", $message);
 			}
 		 });
 		
+		// When an element with a class of "placePass" is clicked, hide it.
+		$(".placePass").focus(function() {
+			$(this).hide();
+		});
+
 		// When a user clicks the input (on focus) the default text will be removed
 		$placeholder.focus(function(){
 			var $value =  $(this).attr("value");
@@ -51,7 +86,7 @@ $(document).ready(function(){
 			var $value =  $(this).attr("value");
 			var $placeholderTxt = $(this).attr("placeholder");
 			
-			if($value == '')
+			if(($value == '') && ($(this).attr("type") != "password"))
 			{
 				$(this).attr("value", $placeholderTxt);
 			}
