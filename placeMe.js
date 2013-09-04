@@ -127,14 +127,16 @@ $(function() {
 		// causing validation issues. So we're going to remove the default text
 		// and submit the inputs as blank.
 		$("form").submit(function(){
-			var $input = $(":input");
-			
-			$input.each(function() {
-				if($this.val() == $this.attr("placeholder"))
-				{
-					$this.val("");
-				}
-			});
+            var $this = $(this),
+                $input = $this.find(":input");
+
+            $input.each(function() {
+                var $this = $(this);
+                if($this.val() == $this.attr("placeholder"))
+                {
+                    $this.val("");
+                }
+            });
 		});
 	}
 	
